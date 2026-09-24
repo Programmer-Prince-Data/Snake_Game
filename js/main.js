@@ -1,74 +1,109 @@
 import { Game } from './game.js';
+import { setupInput } from './input.js';
 
 const board = document.getElementById('game-board');
 
 let game;
 let interval;
 
+
 const createBoard = () => {
+
     board.innerHTML = "";
 
     for (let y = 0; y < game.rows; y++) {
+
         for (let x = 0; x < game.columns; x++) {
 
             const cell = document.createElement('div');
-            cell.classList.add('cell');  // add a class to the cell for styling
+
+            cell.classList.add('cell');
+
             cell.dataset.x = x;
             cell.dataset.y = y;
-            board.appendChild(cell);
 
+            board.appendChild(cell);
         }
     }
-}
+};
+
 
 const Render = () => {
-    const cells = board.children; // Get all cells in the board
 
-    // Snake
+    const cells = board.children;
 
-    game.snake
-        .getBody()
-        .forEach(
-            (segment, index) => {
+    // Clear previous rendering
+    for (const cell of cells) {
 
-                const cell = board.querySelector(
-                    `[data-x="${segment.x}"][data-y="${segment.y}"]`
-                );
-
-                if (!cell) return;
-
-                cell.classList.add(
-                    "snake"
-                );
-
-                if (index === 0) {
-
-                    cell.classList.add(
-                        "head"
-                    );
-
-                }
-
-            }
+        cell.classList.remove(
+            "snake",
+            "head",
+            "food"
         );
 
+    }
 
+    // Render snake
+    game.snake
+        .getBody()
+        .forEach((segment, index) => {
 
-}
+            const cell = board.querySelector(
+                `[data-x="${segment.x}"][data-y="${segment.y}"]`
+            );
+
+            if (!cell) return;
+
+            cell.classList.add("snake");
+
+            if (index === 0) {
+
+                cell.classList.add("head");
+
+            }
+
+        });
+
+};
+
 
 const startGame = () => {
-    // clearInterval(interval);
 
-    //instance of game
+    clearInterval(interval);
+
+    // Instance of Game
     game = new Game();
 
-    //craete a board
+    // Create board
     createBoard();
 
-    //render the snake
+    // Render the snake
     Render();
 
+    // Update the game at the specified speed
+    interval = setInterval(() => {
 
-}
+        game.update();
+
+        Render();
+
+        if (!game.running) {
+
+            clearInterval(interval);
+
+        }
+
+    }, game.speed);
+
+
+    // Setup keyboard and button input
+    setupInput(direction => {
+
+        game.setDirection(direction);
+
+    });
+
+};
+
 
 startGame();

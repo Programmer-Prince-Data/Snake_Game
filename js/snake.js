@@ -7,19 +7,30 @@ export class Snake {
             { x: 8, y: 10 },
         ];
     }
-    //get head
+     getHead() {
+        return this.body[0];
+    }
 
-    //move
+    // Move the snake by adding a new head
+    // and keeping the body length the same
+    move(newHead) {
+        return this.body.unshift(newHead);
+    }
 
-    //remove tail
+    // Remove the tail segment
+    removeTail() {
+        return this.body.pop();
+    }
 
-    //grow
+    // Grow the snake by adding a new head
+    // without removing the tail
+    grow(newHead) {
+        this.body.unshift(newHead);
+    }
 
-    //get body
+    // Get the complete snake body
     getBody() {
-
         return this.body;
-
     }
 
 
